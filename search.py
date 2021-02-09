@@ -133,59 +133,75 @@ def breadthFirstSearch(problem):
                 queue.push((coordinate, nextSolution))
     return []
 
-
 def uniformCostSearch(problem):
     """Search the node of least total cost first."""
     "*** YOUR CODE HERE ***"
-    visited         = util.Counter()
-    parent          = util.Counter()
-    parent_action   = util.Counter()
-    
-    dist    = dict()
 
-    dist[problem.getStartState()] = 0
+    node = (problem.getStartState(), [])
 
-    visited[problem.getStartState()] = 1
+    wasVisited = util.Counter()
+    distances  = dict()
 
-    queue = util.Queue()
-    queue.push(problem.getStartState())
+    queue = util.PriorityQueue()
+    queue.push(node, 0)
 
-    goal = (float("inf"), float("inf"))
+    distances[problem.getStartState()] = 0
 
-    while queue:
-        p = queue.pop()
+    while True:
+        if queue.isEmpty():
+            return []
+        
+        state, solution = queue.pop()
+        
+        if problem.isGoalState(state):
+            return solution
+        
+        wasVisited[state] = 1
 
-        if problem.isGoalState(p):
-            goal = p
-            break
+        for neighbor in problem.getSuccessors(state):
+            if neighbor[0] not in distances or distances[state] + neighbor[2] < distances[neighbor[0]]:
+                distances[neighbor[0]] = distances[state] + neighbor[2]
+                if wasVisited[neighbor[0]] == 0:
+                    queue.push((neighbor[0], solution + [neighbor[1]]) , distances[neighbor[0]])
+    return []
+# def uniformCostSearch(problem):
+#     """Search the node of least total cost first."""
+#     "*** YOUR CODE HERE ***"
+#     from game import Directions
 
-        for s in problem.getSuccessors(p):
-            if s[0] not in dist or dist[s[0]] > dist[p] + s[2]:
-                parent[s[0]] = p
-                parent_action[s[0]] = s[1]
+#     #initialization
+#     queue = util.PriorityQueue() 
+#     visitedList = []
 
-                dist[s[0]] = dist[p] + s[2]
-                if visited[s[0]] == 0:
-                    visited[s[0]] = 1
-                    queue.push(s[0])
+#     #push the starting point into queue
+#     queue.push((problem.getStartState(),[],0),0) # push starting point with priority num of 0
+#     #pop out the point
+#     (state,toDirection,toCost) = queue.pop()
+#     #add the point to visited list
+#     visitedList.append((state,toCost))
 
-    if goal == (float("inf"), float("inf")):
-        print("ERROR")
-        return []
+#     while True: #while we do not find the goal point
+#         if problem.isGoalState(state):
+#             break
 
-    last = goal
+#         successors = problem.getSuccessors(state) #get the point's succesors
+#         for son in successors:
+#             visitedExist = False
+#             total_cost = toCost + son[2]
+#             for (visitedState,visitedToCost) in visitedList:
+#                 # we add the point only if the successor has not been visited, or has been visited but now with a lower cost than the previous one
+#                 if (son[0] == visitedState) and (total_cost >= visitedToCost): 
+#                     visitedExist = True # point recognized visited
+#                     break
 
-    solution = []
+#             if not visitedExist:        
+#                 # push the point with priority num of its total cost
+#                 queue.push((son[0],toDirection + [son[1]],toCost + son[2]),toCost + son[2]) 
+#                 visitedList.append((son[0],toCost + son[2])) # add this point to visited list
 
-    while parent[last] != problem.getStartState():
-        solution.append(parent_action[last])
-        last = parent[last]
+#         (state,toDirection,toCost) = queue.pop()
 
-    solution.append(parent_action[last])
-    solution.reverse()
-
-    return solution
-
+#     return toDirection
 
 def nullHeuristic(state, problem=None):
     """
@@ -195,66 +211,46 @@ def nullHeuristic(state, problem=None):
     return 0
 
 
-def expandNodeGreedy(problem, state, heuristic=nullHeuristic):
-    childs = util.PriorityQueue()
-
-    for successor in problem.getSuccessors(state):
-        node = (successor[0], successor[1])
-        heu = heuristic(successor[0], problem)
-
-        if problem.isGoalState(node):
-            solution = util.Stack()
-            solution.push(node[1])
-            return solution
-
-        childs.push(node, heu) 
-
-    while not childs.isEmpty():
-        node = childs.pop()
-        solution = expandNodeGreedy(problem, node[0], heuristic)
-
-        if(not solution.isEmpty()):
-            solution.push(node[1])
-            return solution
-
-    return util.Stack()
-
-
-def _greedySearch(problem, heuristic=nullHeuristic):
-    """Search the node that has the lowest heuristic first."""
-    "*** YOUR CODE HERE ***"
-    s = expandNodeGreedy(problem, problem.getStartState(), heuristic)
-
-    solution = list()
-
-    while not s.isEmpty():
-        solution.append(s.pop())
-    
-    return solution
-
-
 def greedySearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest heuristic first."""
     "*** YOUR CODE HERE ***"
-    state = problem.getStartState()
-    isVisited = util.Counter()
+    queue = util.PriorityQueue()
+    wasVisited = util.Counter()
     solution = []
 
-    while(not problem.isGoalState(state)):
-        best = float('inf')
-        isVisited[state] = 1
-        action = None
-        for neighbor in problem.getSuccessors(state):
-            cost = heuristic(neighbor[0], problem)
-            
-            if best > cost and isVisited[neighbor[0]] == 0:
-                best = cost
-                action = neighbor[1]
-                state = neighbor[0]
-        
-        solution.append(action)
+    startstate = problem.getStartState()
 
-    return solution
+    if problem.isGoalState(startstate):
+        return 'Stop'
+    queue.push(
+        [
+            #(state, action, distance), priority
+            [(startstate, 'Stop', 0), 0]
+        ], 
+        heuristic(startstate, problem)
+    )
+
+    while not queue.isEmpty():
+        nodes = queue.pop()
+
+        node = nodes[-1]
+        if problem.isGoalState(node[0][0]):
+            for path in nodes[1:]:
+                # Append actions
+                solution.append(path[0][1])
+            return solution
+
+        if wasVisited[node[0][0]] == 0:
+            wasVisited[node[0][0]] = 1
+
+            for successor in problem.getSuccessors(node[0][0]):
+                if wasVisited[successor[0]] == 0:
+                    cost = node[1] + successor[2]
+                    priority = heuristic(successor[0], problem)
+                    currentpath = nodes[:] # copy current history
+                    currentpath.append([successor, cost])
+                    queue.push(currentpath, priority)
+    return []
 
 def aStarSearch(problem, heuristic=nullHeuristic):
     """Search the node that has the lowest combined cost and heuristic first."""
