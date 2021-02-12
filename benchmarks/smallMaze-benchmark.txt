@@ -1,0 +1,84 @@
+readCommand argv {argv}
+[SearchAgent] using function bfs
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 19 in 0.0 seconds
+Search nodes expanded: 92
+Pacman emerges victorious! Score: 491
+Average Score: 491.0
+Scores:        491.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+Total Time: 3.249238442
+
+readCommand argv {argv}
+[SearchAgent] using function dfs
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 37 in 0.0 seconds
+Search nodes expanded: 93
+Pacman emerges victorious! Score: 473
+Average Score: 473.0
+Scores:        473.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+Total Time: 5.227636542
+
+readCommand argv {argv}
+[SearchAgent] using function ucs
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 19 in 0.0 seconds
+Search nodes expanded: 92
+Pacman emerges victorious! Score: 491
+Average Score: 491.0
+Scores:        491.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+Total Time: 3.275789903
+
+readCommand argv {argv}
+[SearchAgent] using function gs and heuristic nullHeuristic
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 19 in 0.0 seconds
+Search nodes expanded: 92
+Pacman emerges victorious! Score: 491
+Average Score: 491.0
+Scores:        491.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+Total Time: 3.282664614
+
+readCommand argv {argv}
+[SearchAgent] using function astar and heuristic nullHeuristic
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 19 in 0.0 seconds
+Search nodes expanded: 92
+Pacman emerges victorious! Score: 491
+Average Score: 491.0
+Scores:        491.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+Total Time: 3.295324762
+
+readCommand argv {argv}
+[SearchAgent] using function gs and heuristic manhattanHeuristic
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 29 in 0.0 seconds
+Search nodes expanded: 39
+Pacman emerges victorious! Score: 481
+Average Score: 481.0
+Scores:        481.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+Total Time: 4.338122722
+
+readCommand argv {argv}
+[SearchAgent] using function astar and heuristic manhattanHeuristic
+[SearchAgent] using problem type PositionSearchProblem
+Path found with total cost of 19 in 0.0 seconds
+Search nodes expanded: 53
+Pacman emerges victorious! Score: 491
+Average Score: 491.0
+Scores:        491.0
+Win Rate:      1/1 (1.00)
+Record:        Win
+Total Time: 3.261402485
+

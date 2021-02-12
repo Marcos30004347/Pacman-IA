@@ -115,22 +115,25 @@ def depthFirstSearch(problem):
 def breadthFirstSearch(problem):
     """Search the shallowest nodes in the search tree first."""
     "*** YOUR CODE HERE ***"
-    # Use a Queue, so the search explores all nodes on one level before moving to the next level 
     queue = util.Queue()
-    # Make an empty list of explored nodes
-    visited = []
-    # Place the starting point in the queue
+
+    pushed = util.Counter()
+
     queue.push((problem.getStartState(), []))
-    while queue:
+    pushed[problem.getStartState()] = 1
+
+    while not queue.isEmpty():
         node, solution = queue.pop()
-        if not node in visited:
-            visited.append(node)
-            if problem.isGoalState(node):
-                return solution
-            for successor in problem.getSuccessors(node):
-                coordinate, direction, cost = successor
-                nextSolution = solution + [direction]
-                queue.push((coordinate, nextSolution))
+        if problem.isGoalState(node):
+            return solution
+
+        for neighbor in problem.getSuccessors(node):
+            newSolution = solution + [neighbor[1]]
+
+            if pushed[neighbor[0]] == 0:
+                pushed[neighbor[0]] = 1
+                queue.push((neighbor[0], newSolution))
+
     return []
 
 def uniformCostSearch(problem):
@@ -164,44 +167,6 @@ def uniformCostSearch(problem):
                 if wasVisited[neighbor[0]] == 0:
                     queue.push((neighbor[0], solution + [neighbor[1]]) , distances[neighbor[0]])
     return []
-# def uniformCostSearch(problem):
-#     """Search the node of least total cost first."""
-#     "*** YOUR CODE HERE ***"
-#     from game import Directions
-
-#     #initialization
-#     queue = util.PriorityQueue() 
-#     visitedList = []
-
-#     #push the starting point into queue
-#     queue.push((problem.getStartState(),[],0),0) # push starting point with priority num of 0
-#     #pop out the point
-#     (state,toDirection,toCost) = queue.pop()
-#     #add the point to visited list
-#     visitedList.append((state,toCost))
-
-#     while True: #while we do not find the goal point
-#         if problem.isGoalState(state):
-#             break
-
-#         successors = problem.getSuccessors(state) #get the point's succesors
-#         for son in successors:
-#             visitedExist = False
-#             total_cost = toCost + son[2]
-#             for (visitedState,visitedToCost) in visitedList:
-#                 # we add the point only if the successor has not been visited, or has been visited but now with a lower cost than the previous one
-#                 if (son[0] == visitedState) and (total_cost >= visitedToCost): 
-#                     visitedExist = True # point recognized visited
-#                     break
-
-#             if not visitedExist:        
-#                 # push the point with priority num of its total cost
-#                 queue.push((son[0],toDirection + [son[1]],toCost + son[2]),toCost + son[2]) 
-#                 visitedList.append((son[0],toCost + son[2])) # add this point to visited list
-
-#         (state,toDirection,toCost) = queue.pop()
-
-#     return toDirection
 
 def nullHeuristic(state, problem=None):
     """
@@ -286,131 +251,6 @@ def aStarSearch(problem, heuristic=nullHeuristic):
     return []
 
 
-
-# def aStarSearch(problem, heuristic=nullHeuristic):
-#     """Search the node that has the lowest combined cost and heuristic first."""
-#     "*** YOUR CODE HERE ***"
-#     state = problem.getStartState()
-
-#     openSet     = util.PriorityQueue()
-#     closeSet     = set()
-#     openSet.push(state, 0)
-
-#     cameFrom            = dict()
-#     cameFromAction      = dict()
-#     distances              = dict()
-#     distances[state]       = 0
-
-#     fScore = dict()
-#     fScore[state] = heuristic(state, problem)
-
-#     current = None
-
-#     while not openSet.isEmpty():
-#         current = openSet.pop()
-
-#         if(problem.isGoalState(current)):
-#             return reconstruct_path(cameFrom, cameFromAction, current)
-
-#         # print(len(openSet.heap))
-#         # print(problem.getSuccessors(current))
-#         closeSet.add(current)
-
-#         for neighbor in problem.getSuccessors(current):
-#             # print("state", _state)
-#             # print("closeSet", closeSet)
-    
-#             distance = distances[current] + neighbor[2]
-#             # print("tentative", distance)
-
-#             if neighbor[0] not in distances or distance <= distances[neighbor[0]]:
-#                 cameFrom[neighbor[0]] = current
-#                 cameFromAction[neighbor[0]] = neighbor[1]
-
-#                 distances[neighbor[0]] = distance
-#                 fScore[neighbor[0]] = distances[neighbor[0]] + heuristic(neighbor[0], problem)
-#                 # print("_state", _state)
-                
-#                 if neighbor[0] not in closeSet:
-#                     openSet.push(neighbor[0], fScore[neighbor[0]])
-
-#     # return reconstruct_path(cameFrom, cameFromAction, current)
-#     return []
-
-# def _aStarSearch(problem, heuristic=nullHeuristic):
-#     """Search the node that has the lowest combined cost and heuristic first."""
-#     "*** YOUR CODE HERE ***"
-#     _state           = problem.getStartState()
-#     _open            = util.Counter()
-#     _closed          = util.Counter()
-#     _node            = util.Counter()
-
-#     _tree            = util.Counter()
-    
-
-#     _node['parent']  = 'Null'
-#     _node['action']  = 'Null'
-#     _node['dist']    = 0
-#     _node['cost']    = 0 + heuristic(_state, problem)
-#     _node['state']   = _state
- 
-#     _frontier = util.PriorityQueue()
-#     _frontier.push(_node, 0)
-
-#     _open[_state] = 1
-#     _closed[_state] = 0
-
-#     solution = list()
-
-
-#     while(True):
-#         if _frontier.isEmpty():
-#             goal = current['state']
-#             break
-
-#         current = _frontier.pop()
-
-#         if problem.isGoalState(current['state']):
-#             print("GOAL")
-#             break
-
-#         print(current['state'])
-
-#         _open[current['state']]      = 0
-#         _closed[current['state'][0]]    = 1
-
-#         for successor in problem.getSuccessors(current['state']):
-#             # if _closed[successor[0]] == 0:
-#                 _node            = util.Counter()
-#                 _node['state']   = successor[0]
-#                 _node['dist']    = successor[2] + current['dist']
-#                 _node['action']  = successor[1]
-#                 _node['parent']  = current
-
-#                 if _closed[successor[0][0]] == 0:
-#                     _open[_node['state']] = 1
-#                     _frontier.push(_node, _node['dist'] + heuristic(_node['state'], problem))
-        
-
-#     while goal != problem.getStartState():
-#         solution.append(_parent[goal]['action'])
-#         goal = _parent[goal]['state']
-    
-
-#     solution.reverse()
-#     solution.pop()
-
-#     print(solution)
-#     return solution
-
-
-# import graphProblem
-
-# import math
-# def distance(p0, p1):
-#     return math.sqrt(math.pow(p0[0] - p1[0], 2) + math.pow(p0[1] - p1[1], 2))
-
-
 def foodHeuristic(state, problem):
     """
     Your heuristic for the FoodSearchProblem goes here.
@@ -442,22 +282,20 @@ def foodHeuristic(state, problem):
     position, foodGrid = state
     "*** YOUR CODE HERE ***"
 
+    dist = list()
+    dist_foods = list()
 
-    distances = list()
-    distances_food = list()
-
-    distances_food.append(0)
+    dist_foods.append(0)
     
     for food in foodGrid.asList():
-        distances.append(util.manhattanDistance(position, food))
-        for tofood in foodGrid.asList():
-            distances_food.append(util.manhattanDistance(food, tofood))
+        dist.append(util.manhattanDistance(position, food))
+        for to_food in foodGrid.asList():
+            dist_foods.append(util.manhattanDistance(food, to_food))
 
-    if len(distances):
-        return min(distances) + max(distances_food) 
+    if len(dist):
+        return min(dist) + max(dist_foods) 
     else:
-        return max(distances_food)
-
+        return max(dist_foods)
 
 
 # Abbreviations
